@@ -1,0 +1,66 @@
+
+(* let test_ajout = *)
+(*   (\* Création d'un tas *\) *)
+  (* let tas_initial : tas_min_tab =  ajoutIteratifsTab [((conv (0,0,0,6)) ; conv (0,0,0,2))  ; (conv (0,0,0,5)) ; (conv (0,0,0,10)) ; (conv (0,0,0,13)) ; (conv (0,0,0,7)) ; (conv (0,0,0,8)) ; (conv (0,0,0,12)) ; (conv (0,0,0,15)) ; (conv (0,0,0,14))] 0 in *)
+
+(*   (\* Affichage du tas initial *\) *)
+  (* afficher_tas tas_initial *)
+
+(* let test_construction = *)
+(*   (\* Création d'un tas *\) *)
+  (* let tas_initial : tas_min_tab =  constructionTab [(conv (0,0,0,6)) ; conv (0,0,0,2)  ; (conv (0,0,0,5)) ; (conv (0,0,0,10)) ; (conv (0,0,0,13)) ; (conv (0,0,0,7)) ; (conv (0,0,0,8)) ; (conv (0,0,0,12)) ; (conv (0,0,0,15)) ; (conv (0,0,0,14))] 30 in *)
+
+(*   (\* Affichage du tas initial *\) *)
+  (* afficher_tas tas_initial *)
+(* test_suppr *)
+  (* Création d'un tas *)
+  (* let tas_initial : tas_min_tab =  ajoutIteratifsTab [(conv (0,0,0,2)) ; (conv (0,0,0,6)) ; (conv (0,0,0,5)) ; (conv (0,0,0,10)) ; (conv (0,0,0,13)) ; (conv (0,0,0,7)) ; (conv (0,0,0,8)) ; (conv (0,0,0,12)) ; (conv (0,0,0,15)) ; (conv (0,0,0,14))] 0 in *)
+
+  (* (\* Affichage du tas initial *\) *)
+  (* afficher_tas tas_initial; *)
+
+  (* (\* Suppression du minimum *\) *)
+  (* let min_supprime = supprMinTab tas_initial in *)
+  (* (\* Affichage du tas après suppression *\) *)
+  (* afficher_tas tas_initial; *)
+  (* (\* Affichage de la valeur supprimée *\) *)
+  (* Printf.printf "Valeur supprimée : %d\n" (match min_supprime with Some (_, _, _, x) -> Int32.to_int x | None -> 0)  *)
+
+
+(* let test_construction =        *)
+(*   let tas_initial : tas_min_tab =  (constructionTab [(conv (0,0,0,13)) ; (conv (0,0,0,14)) ; (conv (0,0,0,8)) ; (conv (0,0,0,15)) ; (conv (0,0,0,2)) ; (conv (0,0,0,7)) ; (conv (0,0,0,5)) ; (conv (0,0,0,12)) ; (conv (0,0,0,10)) ; (conv (0,0,0,6))] 0) in  *)
+(*   let tas_initial_2 : tas_min_tab = (constructionTab [conv (0, 0, 0, 18); conv (0, 0, 0, 1); conv (0, 0, 0, 23); conv (0, 0, 0, 12); conv (0, 0, 0, 38); conv (0, 0, 0, 3); conv (0, 0, 0, 32); conv (0, 0, 0, 6); conv (0, 0, 0, 22); conv (0, 0, 0, 30); conv (0, 0, 0, 29); conv (0, 0, 0, 7); conv (0, 0, 0, 14); conv (0, 0, 0, 27); conv (0, 0, 0, 28); conv (0, 0, 0, 40); conv (0, 0, 0, 19); conv (0, 0, 0, 10); conv (0, 0, 0, 25); conv (0, 0, 0, 39) *)
+(* ] 0)  in *)
+(*   afficher_tas tas_initial_2 *)
+
+(* let test_union_tas_tab () = *)
+(*   let tas1 = (constructionTab [conv (0, 0, 0, 37);  conv (0, 0, 0, 18); conv (0, 0, 0, 15); conv (0, 0, 0, 39); conv (0, 0, 0, 11); conv (0, 0, 0, 40); conv (0, 0, 0, 27); conv (0, 0, 0, 25); conv (0, 0, 0, 9); conv (0, 0, 0, 32); conv (0, 0, 0, 3); conv (0, 0, 0, 19); conv (0, 0, 0, 23); conv (0, 0, 0, 10); conv (0, 0, 0, 29); conv (0, 0, 0, 14); conv (0, 0, 0, 26); conv (0, 0, 0, 4)] 0) in  *)
+
+(*   let tas2 = constructionTab [conv (0, 0, 0, 18); conv (0, 0, 0, 28); conv (0, 0, 0, 35); conv (0, 0, 0, 8); conv (0, 0, 0, 36); conv (0, 0, 0, 34); conv (0, 0, 0, 16); conv (0, 0, 0, 12)] 0 in *)
+
+(*   Printf.printf "Tas 1 avant l'union : "; *)
+(*   afficher_tas tas1; *)
+(*   Printf.printf "Taille : %d\n" !(snd tas1); *)
+
+(*   Printf.printf "Tas 2 avant l'union : "; *)
+(*   afficher_tas tas2; *)
+(*   Printf.printf "Taille : %d\n" !(snd tas2); *)
+
+(*   let tas_union = union_tas_tab tas1 tas2 in *)
+
+(*   Printf.printf "Tas résultant de l'union : "; *)
+(*   afficher_tas (tas_union); *)
+
+(*   Printf.printf "Taille attendue de l'union : %d\n" (!(snd tas1) + !(snd tas2)); *)
+
+(*   Printf.printf "Contenu attendu de l'union : "; *)
+(*   Array.iter (fun elem -> *)
+(*     match elem with *)
+(*     | Some x -> Printf.printf "%d " (val_cle x) *)
+(*     | None -> Printf.printf "%d " 0 *)
+(*   ) !(fst tas_union); *)
+(*   print_newline () *)
+(* ;; *)
+
+(* Appel du test *)
+(* test_union_tas_tab (); *)
