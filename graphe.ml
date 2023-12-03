@@ -38,9 +38,9 @@ let fichier_vers_liste_cle (fichier:string):cle list =
        raise e
     ) in lire channel []
 
-let temps (fonc):float =
+let temps fonc cle_fichier taille :float =
   let debut = Sys.time() in
-  let _ = fonc in
+  let _ = fonc cle_fichier taille in
   let fin = Sys.time() in
   fin -. debut
 
@@ -48,7 +48,7 @@ let moyenne_temps (fonc: (cle list -> int -> tas_min_tab)) (taille:int) =
   let noms_fichier:string list = List.map (fun i -> Printf.sprintf "./cles_alea/cles_alea/jeu_%d_nb_cles_%d.txt" i taille) [1; 2; 3; 4; 5] in
   (* liste contenant les listes de clés de chaque fichier *)
   let liste_cle_fichier:cle list list = List.map (fun fichier -> fichier_vers_liste_cle fichier) noms_fichier in
-  let temps_cle:float list = List.map (fun cles_fichier -> temps (fonc cles_fichier taille))  liste_cle_fichier in
+  let temps_cle:float list = List.map (fun cles_fichier -> temps (fonc) cles_fichier taille)  liste_cle_fichier in
   let moyenne = (List.fold_left (+.) 0.0 temps_cle) /. 5.0 in
   moyenne
 
