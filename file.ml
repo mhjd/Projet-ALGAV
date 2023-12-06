@@ -13,9 +13,23 @@ let rec creer_arbre_binomial (taille:int):arbre_binomial =
   | 0 -> Noeud([Feuille; Feuille])
   | n -> concat_le_double_arbre (creer_arbre_binomial (n-1)) 
 
+let rec get_enfants arbre =
+  match arbre with
+  | Noeud(enfants) -> List.filter (fun el -> el <> Feuille) enfants (* on enlève les feuilles *)
+  | Feuille -> [] 
+
+(* fonction très utile pour voir si l'arbre binomial à bien la bonne forme *)
 let afficher_nb_noeud_par_niveau arbre_binomial =
-  (* alterner entre deux liste, dans lesquels on met tout les enfant d'un niveau, puis on fait l'inverse, etc *)
+  let racine = [arbre_binomial] in
+  let rec aux liste niveau =
+    let nb_noeud = List.length liste in
+    Printf.printf "Niveau : %d , Nombre noeud : %d\n" niveau nb_noeud ;
+    let enfants = List.flatten (List.map (fun el -> get_enfants el) liste) in
+    if enfants <> [] then aux enfants (niveau+1)
+  in aux racine 0
+
+                 
 
              
-let exemple_arbre = creer_arbre_binomial 4;;
-afficher_arbre_binomial exemple_arbre;;
+let exemple_arbre = creer_arbre_binomial 3;;
+afficher_nb_noeud_par_niveau exemple_arbre;;
