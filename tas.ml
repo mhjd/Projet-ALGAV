@@ -129,7 +129,6 @@ let ajoutMinTab (tas_tab:tas_min_tab) (el:cle) =
   
 let ajoutIteratifsTab (el_liste:cle list) (taille_allouer:int) : tas_min_tab =
   let tab = Array.make taille_allouer None in
-  let taille = List.length el_liste in
   let le_return:tas_min_tab = (ref tab, ref 0) in
   let rec aux (tas_tab:tas_min_tab) (el_liste:cle list) =
  ( match el_liste with
