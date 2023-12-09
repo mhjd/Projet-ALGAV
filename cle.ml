@@ -12,7 +12,7 @@ let val_cle (la_cle:cle) =
    - 0 si c'est les même nombre . *)
 (* Merci à Danaël pour l'astuce *)
 let inf_int32 a b = (Int32.unsigned_compare a b) < 0 
-let eq_int32 a b = (Int32.unsigned_compare a b) = 0 
+let eq_int32 a b = (Int32.unsigned_compare a b) = 0 (* = ou == ? je laisse = pour l'instant *)
 let neq_int32 a b = not (eq_int32 a b)
 
 
