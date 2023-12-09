@@ -128,7 +128,7 @@ let ajout_fb (cle:cle) (fb:file_binomial):file_binomial =
   let fb_a_ajouter = cle_en_fb cle in
   union_fb fb_a_ajouter fb
 
-let construction_fb (liste_cle : cle list) : file_binomiale =
+let construction_fb (liste_cle : cle list) : file_binomial =
   (* je suis pas sûr de moi pour l'accumulateur : [] *)
   List.fold_left (fun acc cle -> ajout_fb cle acc) []  liste_cle
 
