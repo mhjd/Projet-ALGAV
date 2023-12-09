@@ -127,7 +127,11 @@ and union_fb (fb1:file_binomial) (fb2:file_binomial) : file_binomial =
 let ajout_fb (cle:cle) (fb:file_binomial):file_binomial =
   let fb_a_ajouter = cle_en_fb cle in
   union_fb fb_a_ajouter fb
- 
+
+let construction_fb (liste_cle : cle list) : file_binomiale =
+  (* je suis pas sûr de moi pour l'accumulateur : [] *)
+  List.fold_left (fun acc cle -> ajout_fb cle acc) []  liste_cle
+
 let decapite (tb:tournoi_binomial): file_binomial =
   match tb with
   | Noeud(_, _, enfants) -> enfants
@@ -171,6 +175,7 @@ let suppr_min_file (fb:file_binomial): (cle * file_binomial) =
   | [] -> failwith "file vide, aucun élément à supprimer"
   
   
+
 
 (* Test : voir si les arbres se construisent avec la bonne taille *)
 let exemple_arbre = creer_arbre_binomial 4;;
