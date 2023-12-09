@@ -32,4 +32,9 @@ let rec ajout_abr (abr:abr) (el:cle) : abr =
   else
     Noeud( racine abr, sag abr, ajout_abr (sad abr) el)
 
-
+let rec recherche (abr:abr) (el:cle) : bool =
+  match abr with
+  | Noeud(cle, le_sag, le_sad) -> if eg cle el then true
+                                  else if inf cle el then recherche le_sag cle
+                                  else recherche le_sad cle
+  | Vide -> false 
