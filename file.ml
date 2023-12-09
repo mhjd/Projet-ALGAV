@@ -8,7 +8,7 @@ type tournoi_binomial =
   | Vide
 and enfants = tournoi_binomial list
 
-type file_binomial = tournoi_binomial list
+type file_binomiale = tournoi_binomial list
 
 let rec get_enfants (tb:tournoi_binomial):(tournoi_binomial list) =
   match tb with
@@ -47,10 +47,10 @@ let rec creer_arbre_binomial (taille:int):tournoi_binomial =
 
 let cle_en_tb (cle:cle):tournoi_binomial =
   Feuille(cle)
-let tb_en_fb (tb:tournoi_binomial) :file_binomial =
+let tb_en_fb (tb:tournoi_binomial) :file_binomiale =
   [tb]
 
-let cle_en_fb (cle:cle):file_binomial =
+let cle_en_fb (cle:cle):file_binomiale =
   tb_en_fb (cle_en_tb cle)
 
 
@@ -79,7 +79,7 @@ let rec deg (tb:tournoi_binomial):int =
   | Vide -> failwith "anormal"
                
 (* la tête de la fb  est le tournoi binomial avec le degré minimum*)
-let ajout_min_fb  (tb:tournoi_binomial) (fb:file_binomial): file_binomial =
+let ajout_min_fb  (tb:tournoi_binomial) (fb:file_binomiale): file_binomiale =
   tb::fb
 
 let est_vide (tb:tournoi_binomial):bool = 
@@ -87,7 +87,7 @@ let est_vide (tb:tournoi_binomial):bool =
   | Vide -> true
   | _ -> false
 
-let rec ufret (fb1:file_binomial) (fb2:file_binomial) (retenu: tournoi_binomial)  =
+let rec ufret (fb1:file_binomiale) (fb2:file_binomiale) (retenu: tournoi_binomial)  =
   if est_vide retenu then
     begin
     match fb1, fb2 with
@@ -120,19 +120,19 @@ let rec ufret (fb1:file_binomial) (fb2:file_binomial) (retenu: tournoi_binomial)
          ufret rst2 fb1 (union2tid t2 retenu)
        else
          failwith "n'est pas censé arrivé"
-and union_fb (fb1:file_binomial) (fb2:file_binomial) : file_binomial =
+and union_fb (fb1:file_binomiale) (fb2:file_binomiale) : file_binomiale =
   ufret fb1 fb2 Vide
   
   
-let ajout_fb (cle:cle) (fb:file_binomial):file_binomial =
+let ajout_fb (cle:cle) (fb:file_binomiale):file_binomiale =
   let fb_a_ajouter = cle_en_fb cle in
   union_fb fb_a_ajouter fb
 
-let construction_fb (liste_cle : cle list) : file_binomial =
+let construction_fb (liste_cle : cle list) : file_binomiale =
   (* je suis pas sûr de moi pour l'accumulateur : [] *)
   List.fold_left (fun acc cle -> ajout_fb cle acc) []  liste_cle
 
-let decapite (tb:tournoi_binomial): file_binomial =
+let decapite (tb:tournoi_binomial): file_binomiale =
   match tb with
   | Noeud(_, _, enfants) -> enfants
   | Feuille(_) -> []
@@ -145,7 +145,7 @@ let cle_racine (tb:tournoi_binomial):cle =
   | Vide -> failwith "anormal" 
 
 (* potentiellement, il peut y avoir un problème avec i, on arrête à i=0 ou 1 ? *)
-let enlever_i (liste:file_binomial) (i:int) : (file_binomial * tournoi_binomial)  =
+let enlever_i (liste:file_binomiale) (i:int) : (file_binomiale * tournoi_binomial)  =
   let rec aux liste i ret = 
   match liste with
   | h::t -> if i > 0 then let nouveau_t, retour = (aux t (i-1) ret) in (h::nouveau_t, retour)  else t, Some(h)
@@ -156,7 +156,7 @@ let enlever_i (liste:file_binomial) (i:int) : (file_binomial * tournoi_binomial)
   | None -> failwith "aucun i n'a été trouvé"
   | Some(tb) -> (nouvelle_fb, tb)
   
-let suppr_min_file (fb:file_binomial): (cle * file_binomial) =
+let suppr_min_file (fb:file_binomiale): (cle * file_binomiale) =
   (* on est censé trouver le plus petit en parcourant chaque racine
      on retire le tournoi
      on décapite ce tournoi et on obtient une nouvelle file (fonction décapite)
