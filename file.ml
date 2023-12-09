@@ -128,26 +128,47 @@ let ajout_fb (cle:cle) (fb:file_binomial):file_binomial =
   let fb_a_ajouter = cle_en_fb cle in
   union_fb fb_a_ajouter fb
  
-(* let decapite (tb:tournoi_binomial):file_binomial = *)
-  (* on prend la racine
-    ah bah je crois qu'on renvoie juste l'attribut "enfants" 
-    ah mais je met pas le degré
-    enfants, c'est une tb list, alors qu'il nous faut une (degre * tb) list
-    pour ça va falloir utilisé map
-    pas besoin de calculer
-    ça prend une complexité de n par contre du coup...
-    bon au pire, on va changer
+let decapite (tb:tournoi_binomial): file_binomial =
+  match tb with
+  | Noeud(_, _, enfants) -> enfants
+  | Feuille(_) -> []
+  | Vide -> failwith "n'est jamais censé arrivé"
 
-    ouais mais nan, si on fait ça, ça va pas réglé de problème, car on va toujours renvoyer une liste de tournoi binomiaux et pas une (degre * tb) list -> file_binomial
+let cle_racine (tb:tournoi_binomial):cle =
+  match tb with
+  | Noeud(_, cle, _) -> cle
+  | Feuille(cle) -> cle
+  | Vide -> failwith "anormal" 
 
-    que faire alors ? est-ce une si bonne idée que de faire (degre * tb) list
-   *)
-(* let suppr_min_file (file:file_binomial): (cle * file_binomial) =  *)
+(* potentiellement, il peut y avoir un problème avec i, on arrête à i=0 ou 1 ? *)
+let enlever_i (liste:file_binomial) (i:int) : (file_binomial * tournoi_binomial)  =
+  let rec aux liste i ret = 
+  match liste with
+  | h::t -> if i > 0 then let nouveau_t, retour = (aux t (i-1) ret) in (h::nouveau_t, retour)  else t, Some(h)
+  | [] -> [], ret
+  in
+  let nouvelle_fb, tb_opt = aux liste i None in
+  match tb_opt with
+  | None -> failwith "aucun i n'a été trouvé"
+  | Some(tb) -> (nouvelle_fb, tb)
+  
+let suppr_min_file (fb:file_binomial): (cle * file_binomial) =
   (* on est censé trouver le plus petit en parcourant chaque racine
      on retire le tournoi
      on décapite ce tournoi et on obtient une nouvelle file (fonction décapite)
      on fait l'union de cette nouvelle file, ainsi que de notre file de départ sans le tournoi
    *)
+  let compare_racine plus_petit tb =
+      let i, cle_tbi = plus_petit in
+      if inf (cle_racine tb) cle_tbi then (i+1, cle_racine tb)
+      else plus_petit
+  in
+  match fb with
+  | tb0::reste -> let i , cle_plus_petite = List.fold_left compare_racine (0, cle_racine tb0) fb in
+                  let fb_sans_i, tb_suppr = enlever_i fb i in 
+                  let fb_tb_decapite = decapite tb_suppr in
+                  (cle_plus_petite, union_fb fb_sans_i fb_tb_decapite)
+  | [] -> failwith "file vide, aucun élément à supprimer"
   
   
 
