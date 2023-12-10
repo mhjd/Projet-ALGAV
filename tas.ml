@@ -159,14 +159,6 @@ let constructionTab  (el_liste:cle list) (taille_allouer:int) : tas_min_tab =
       (tas)
   in ranger_vals le_return (taille_liste-1)
 
-let int32_tuple_of_int x =
-  (Int32.zero, Int32.zero, Int32.zero, Int32.of_int x)
-let some_int32_of_int_tuple tuple  =
-  let a, b, c, d = tuple in
-  (Some(Int32.of_int a, (Int32.of_int b), (Int32.of_int c), (Int32.of_int d)))
-
-let conv = int32_tuple_of_int
-let conv2 = some_int32_of_int_tuple
 
 
 let some_cle_en_cle (cle:cle option):cle=

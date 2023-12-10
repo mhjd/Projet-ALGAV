@@ -2,6 +2,9 @@ open Cle
 open Tas
 open Graphe
 
+let int32_tuple_of_int x =
+  (Int32.zero, Int32.zero, Int32.zero, Int32.of_int x)
+let conv = int32_tuple_of_int
 let test_tas_min () =
   
   (* test ajout itératif *)
