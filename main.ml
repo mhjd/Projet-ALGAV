@@ -4,6 +4,9 @@ open Graphe
 
 
 let () = 
- creer_graphique_test_fonc (constructionTab) "constructionTab.plt" ;;
-creer_graphique_test_fonc ajoutIteratifsTab "ajoutIteratifsTab.plt" ;;
+  (* Test.test_tas_min () ;; *)
+  Test.graphique_construction_tas_tab () ;;
+  Test.graphique_ajoutIteratifs_tas_tab () ;;
+(*   *)
+(*  *)
 

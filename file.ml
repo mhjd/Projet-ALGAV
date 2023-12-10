@@ -111,12 +111,12 @@ let rec ufret (fb1:file_binomiale) (fb2:file_binomiale) (retenu: tournoi_binomia
        let deg1, deg2 = deg t1, deg t2 in
        if deg_ret < deg1 && deg_ret < deg2 then
          ajout_min_fb retenu (union_fb fb1 fb2)
-       else if deg_ret == deg1 && deg_ret == deg2 then
+       else if deg_ret = deg1 && deg_ret = deg2 then
          let file_sans_min = ufret rst1 rst2 (union2tid t1 t2) in 
          ajout_min_fb retenu file_sans_min
-       else if deg_ret == deg1 && deg_ret < deg2 then
+       else if deg_ret = deg1 && deg_ret < deg2 then
          ufret rst1 fb2 (union2tid t1 retenu)
-       else if deg_ret == deg2 && deg_ret < deg1 then
+       else if deg_ret = deg2 && deg_ret < deg1 then
          ufret rst2 fb1 (union2tid t2 retenu)
        else
          failwith "n'est pas censé arrivé"

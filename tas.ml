@@ -17,6 +17,14 @@ let afficher_tas (tas: tas_min_tab) =
   ) !(fst tas);
   print_newline ()
 
+let renvoyer_tas (tas: tas_min_tab) =
+  Array.fold_left (fun ma_string elem ->
+    match elem with
+    | Some x -> ma_string ^ (string_of_int (val_cle x ) ) ^ " "
+    | None -> ma_string
+  ) "" !(fst tas)
+
+
 (* vérification à faire : que les deux élément ne dépasse pas la taille du tas
    si c'est le cas, eh bien générer une erreur, car on est pas censé faire d'échange avec des None 
  *)
@@ -81,7 +89,7 @@ let rec descendre_el tas el_i =
   (* 2i + 1 : fils g, 2i + 2 : fils d *)
     let fils_g_i, fils_d_i = (el_i*2+1, el_i*2+2) in
     let fils_g_opt, fils_d_opt = get_tab tas fils_g_i, get_tab tas fils_d_i in
-    afficher_tas tas;
+    (* afficher_tas tas; *)
     match fils_g_opt, fils_d_opt with 
     | None, None -> ()     (* on est arrivé aux feuilles *)
     | None, Some(supr) -> failwith "cas impossible" (* gauche à droite au feuille, dans un tas *)
@@ -109,7 +117,7 @@ let supprMinTab (tas_tab:tas_min_tab) =
   let tab, taille = tas_tab in
   let plus_petit_el = get_tab tas_tab 0 in
   set_tab tas_tab 0 None ;
-  afficher_tas tas_tab ; 
+  (* afficher_tas tas_tab ;  *)
   (* on déplace le plus grand élément à racine *)
   echanger_el_tab tas_tab 0 (!taille-1);
   taille := !taille - 1 ;
@@ -151,16 +159,15 @@ let constructionTab  (el_liste:cle list) (taille_allouer:int) : tas_min_tab =
       (tas)
   in ranger_vals le_return (taille_liste-1)
 
-let int32_of_int_tuple tuple  =
-  let a, b, c, d = tuple in
-  (Int32.of_int a, Int32.of_int b, Int32.of_int c, Int32.of_int d)
-
-let conv = int32_of_int_tuple
-
+let int32_tuple_of_int x =
+  (Int32.zero, Int32.zero, Int32.zero, Int32.of_int x)
 let some_int32_of_int_tuple tuple  =
   let a, b, c, d = tuple in
   (Some(Int32.of_int a, (Int32.of_int b), (Int32.of_int c), (Int32.of_int d)))
+
+let conv = int32_tuple_of_int
 let conv2 = some_int32_of_int_tuple
+
 
 let some_cle_en_cle (cle:cle option):cle=
   match cle with
