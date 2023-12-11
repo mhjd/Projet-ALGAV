@@ -1,10 +1,15 @@
 open Cle
 open Tas
+open File
 open Graphe
+
+     
+let rand_int n = Random.int n
 
 let int32_tuple_of_int x =
   (Int32.zero, Int32.zero, Int32.zero, Int32.of_int x)
 let conv = int32_tuple_of_int
+
 let test_tas_min () =
   
   (* test ajout itératif *)
@@ -43,3 +48,33 @@ let graphique_construction_tas_tab () =
 let graphique_ajoutIteratifs_tas_tab () =
   creer_graphique_test_fonc ajoutIteratifsTab "ajoutIteratifsTab.plt" ;;
 
+
+Random.init 2 ;;
+
+let test_arbre () =
+  let arbre_0 = creer_arbre_binomial 0 in
+  let arbre_10 = creer_arbre_binomial 10 in
+  assert(nb_noeud arbre_0 = int_of_float (2.0 ** 0.0));
+  assert(nb_noeud arbre_10 = int_of_float (2.0 ** 10.0))
+
+let test_file () =
+  let taille = 200 in
+  let max = 100 in
+  let liste_cle = List.init taille (fun i -> int32_tuple_of_int (rand_int max)) in
+  let ma_file = construction_fb liste_cle
+in 
+  List.iter (fun el ->  assert(est_tournoi_binomial el)) ma_file   ; 
+  (* test à réalisé : voire dans quel ordre est H::T, est-ce que degre H > degre T ? Si oui, alors problématique, car on est censé partir de la fin *)
+  (match ma_file with
+  | h1::h2::t -> Printf.printf "degre H1 : %d , degre H2 %d \n" (deg h1) (deg h2)
+  | _ -> print_string "lol")
+  ;
+    (* exit(1);oi *)
+  let decroissant = file_en_liste_decroissante ma_file in true
+  (* begin match decroissant with *)
+  (* | el::queue -> (let _ = List.fold_left (fun acc el -> assert(inf el acc || eg el acc) ; el ) el decroissant in true) *)
+  (* | [] -> true *)
+  (* end *)
+   
+   
+;;

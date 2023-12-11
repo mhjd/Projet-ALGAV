@@ -1,9 +1,9 @@
-all : clean cle.cmo tas.cmo graphe.cmo test.cmo main
+all : clean cle.cmo tas.cmo file.cmo graphe.cmo test.cmo main
 
 
 
-main : cle.cmo tas.cmo graphe.cmo test.cmo main.cmo
-	ocamlc cle.cmo tas.cmo graphe.cmo test.cmo main.cmo -o main.exe
+main : cle.cmo tas.cmo file.cmo graphe.cmo test.cmo main.cmo
+	ocamlc cle.cmo tas.cmo file.cmo graphe.cmo test.cmo main.cmo -o main.exe
 
 
 cle.cmo : 
@@ -11,6 +11,8 @@ cle.cmo :
 
 tas.cmo :
 	ocamlc -c tas.ml
+file.cmo :
+	ocamlc -c file.ml
 
 graphe.cmo : 
 	ocamlc -c graphe.ml
