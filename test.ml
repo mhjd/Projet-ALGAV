@@ -1,4 +1,5 @@
 open Cle
+open Structure_de_donnee
 open Tas
 open File
 open Graphe
@@ -8,46 +9,12 @@ let rand_int n = Random.int n
 
 let int32_tuple_of_int x =
   (Int32.zero, Int32.zero, Int32.zero, Int32.of_int x)
-let conv = int32_tuple_of_int
-
-let test_tas_min () =
-  
-  (* test ajout itératif *)
-  (* Création d'un tas *)
-  let tas_ajout_iteratif : tas_min_tab =  ajoutIteratifsTab [conv 6 ; conv 5  ; conv 2 ; conv 10 ; conv 13 ; conv 7 ; conv 8 ; conv 12 ; conv 15 ; conv 14]  in
-
-  (* Affichage du tas ajout_iteratif *)
-  assert(((renvoyer_tas tas_ajout_iteratif) = "2 6 5 10 13 7 8 12 15 14 ")) ;
-
-  (* test suppr *)
-  (* Suppression du minimum *)
-  let min_supprime = supprMinTab tas_ajout_iteratif in
-  assert(min_supprime = Some(conv 2)) ;
-  assert((renvoyer_tas tas_ajout_iteratif) = "5 6 7 10 13 14 8 12 15 ")  ;
-  (* test  construction *)
-
-
-  (* test cons *)
-  let tas_cons : tas_min_tab =  (constructionTab [conv 10; conv 15; conv 13 ; conv 14; conv 8 ; conv 5 ; conv 6 ; conv 7; conv 12] ) 
-  in
-  assert(renvoyer_tas tas_cons = ("5 7 6 12 8 13 10 14 15 ")) ;
-
-  (* test union *)
-
-  let tas1 = constructionTab [conv 37;  conv 18; conv 15; conv 39; conv 11; conv 40; conv 27; conv 25; conv 9; conv 32; conv 3; conv 19; conv 23; conv 10; conv 29; conv 14; conv 26; conv 4]  in
-
-  let tas2 = constructionTab [conv 18; conv 28; conv 35; conv 8; conv 36; conv 34; conv 16; conv 12] in
-
-  assert((renvoyer_tas tas1) = "3 4 10 9 11 19 15 14 37 32 18 40 23 27 29 25 26 39 ") ; 
-  assert((renvoyer_tas tas2) = "8 12 16 18 36 34 35 28 ") ; 
-  let union_tas = (union_tas_tab tas1 tas2) in
-  assert(renvoyer_tas  union_tas = "3 4 10 8 11 19 15 14 9 12 18 34 23 27 29 25 26 39 37 32 16 18 36 40 35 28 ")
+let conv = int32_tuple_of_int ;;
 
 let graphique_construction_tas_tab () =
-  creer_graphique_test_fonc (constructionTab) "constructionTab.plt" ;;
+  Graphe_tas_min.creer_graphique_construction "constructionTab.plt" ;;
 let graphique_ajoutIteratifs_tas_tab () =
-  creer_graphique_test_fonc ajoutIteratifsTab "ajoutIteratifsTab.plt" ;;
-
+  Graphe_tas_min.creer_graphique_ajouts_iteratifs "ajoutIteratifsTab.plt" ;;
 
 Random.init 2 ;;
 
@@ -56,6 +23,21 @@ let test_arbre () =
   let arbre_10 = creer_arbre_binomial 10 in
   assert(nb_noeud arbre_0 = int_of_float (2.0 ** 0.0));
   assert(nb_noeud arbre_10 = int_of_float (2.0 ** 10.0))
+
+let test_struct (module Ma_structure : Data_structure) =
+  (* créations des clés *)
+  let taille = 200 in
+  let max = 100 in
+  (* let liste_cle = List.init taille (fun i -> int32_tuple_of_int (rand_int max)) in *)
+  let liste_cle = [conv 37;  conv 18; conv 15; conv 39; conv 11; conv 40; conv 27; conv 25; conv 9; conv 32; conv 3; conv 19; conv 23; conv 10; conv 29; conv 14; conv 26; conv 4] in 
+  let ma_struct = Ma_structure.construction liste_cle in 
+  let croissant: cle list = Ma_structure.en_liste_croissante ma_struct in 
+  Printf.printf "taille croissant %d\n" (List.length croissant);
+  begin match croissant with
+  | el::queue -> (List.fold_left (fun acc el -> Printf.printf "el : %d\n" (val_cle el) ; assert(inf acc el || eg el acc); el ) el croissant; ())
+  | [] -> ()
+  end
+
 
 let test_file () =
   let taille = 200 in

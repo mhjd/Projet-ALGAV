@@ -1,10 +1,12 @@
-all : clean cle.cmo tas.cmo file.cmo graphe.cmo test.cmo main
+all : clean cle.cmo structure_de_donnee.cmo tas.cmo file.cmo graphe.cmo test.cmo main
 
 
 
-main : cle.cmo tas.cmo file.cmo graphe.cmo test.cmo main.cmo
-	ocamlc cle.cmo tas.cmo file.cmo graphe.cmo test.cmo main.cmo -o main.exe
+main : cle.cmo structure_de_donnee.cmo tas.cmo file.cmo graphe.cmo test.cmo main.cmo
+	ocamlc cle.cmo structure_de_donnee.cmo tas.cmo file.cmo graphe.cmo test.cmo main.cmo -o main.exe
 
+structure_de_donnee.cmo :
+	ocamlc -c structure_de_donnee.ml
 
 cle.cmo : 
 	ocamlc -c cle.ml

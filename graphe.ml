@@ -1,6 +1,16 @@
 open Cle
+open Structure_de_donnee
 open Tas
 
+(* https://v2.ocaml.org/manual/moduleexamples.html *)
+module type Graphique  = functor (Ma_structure : Data_structure) -> sig
+  val creer_graphique_ajouts_iteratifs :  string -> unit
+  val creer_graphique_construction :   string -> unit
+end;; 
+  
+
+
+module Graphique : Graphique = functor (Ma_structure : Data_structure) ->  struct 
 let string_en_cle (string_en_cle:string) =
 (* il y a certain nombre hexadécimaux ayant moins de 32 chiffre, il faut donc ajouter des 0 devant : *)
   (let string_en_string32 =
@@ -44,7 +54,7 @@ let temps fonc cle_fichier:float =
   let fin = Sys.time() in
   fin -. debut
 
-let moyenne_temps (fonc: (cle list -> tas_min_tab)) (taille:int) =
+let moyenne_temps (fonc: (cle list -> Ma_structure.structure)) (taille:int) =
   let noms_fichier:string list = List.map (fun i -> Printf.sprintf "./cles_alea/cles_alea/jeu_%d_nb_cles_%d.txt" i taille) [1; 2; 3; 4; 5] in
   (* liste contenant les listes de clés de chaque fichier *)
   let liste_cle_fichier:cle list list = List.map (fun fichier -> fichier_vers_liste_cle fichier) noms_fichier in
@@ -55,16 +65,30 @@ let moyenne_temps (fonc: (cle list -> tas_min_tab)) (taille:int) =
 
 let tailles = [1000 ; 5000 ; 10000 ; 20000 ; 50000 ; 80000 ; 120000 ; 200000]
 
-let liste_temps_tailles (fonc: (cle list -> tas_min_tab)) =
+let liste_temps_tailles (fonc: (cle list -> Ma_structure.structure)) =
   List.map (fun x -> (moyenne_temps fonc x, x)) tailles
 
 
 
-let creer_graphique_test_fonc (fonc: (cle list -> tas_min_tab)) (f_sortie:string) =
-  let temps_moyens = liste_temps_tailles fonc in
+(* si on créer plusieurs fonction, une par type de chose qu'on veut tester (union, cons, etc), bah on pourra directement mettre en type de paramètre un attribut de notre Structure *)
+(* en faite, on aurait même pas besoin de passer la fonction en paramètre *)
+
+
+
+let creer_graphique_ajouts_iteratifs (f_sortie:string) =
+  let temps_moyens = liste_temps_tailles Ma_structure.ajouts_iteratifs in
   let file = open_out f_sortie in
   (* y a peut-être pas moyen de direct pattern matché en argument (temps, taille) *)
 
   List.iteri (fun i (temps, taille) ->  Printf.fprintf file "%d %f\n" taille temps) temps_moyens
 
+let creer_graphique_construction (f_sortie:string) =
+  let temps_moyens = liste_temps_tailles Ma_structure.construction in
+  let file = open_out f_sortie in
+  (* y a peut-être pas moyen de direct pattern matché en argument (temps, taille) *)
+
+  List.iteri (fun i (temps, taille) ->  Printf.fprintf file "%d %f\n" taille temps) temps_moyens
 ;;
+end  ;;
+
+module Graphe_tas_min = Graphique (Tas_min_tab)

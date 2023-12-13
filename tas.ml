@@ -1,14 +1,17 @@
 open Cle
+open Structure_de_donnee
+
+module Tas_min_tab : Data_structure = struct
 
 type taille = int ref
 type tableau = cle option array ref
-type tas_min_tab =  tableau * taille
+type structure =  tableau * taille
 
 
-let taille_allouer_tas (tas : tas_min_tab) =  Array.length !(fst tas)
-let taille_tas (tas : tas_min_tab):int = !(snd tas)
+let taille_allouer_tas (tas : structure) =  Array.length !(fst tas)
+let taille_tas (tas : structure):int = !(snd tas)
 
-let afficher_tas (tas: tas_min_tab) =
+let afficher_tas (tas: structure) =
   Printf.printf "Contenu du tas : ";
   Array.iter (fun elem ->
     match elem with
@@ -17,19 +20,13 @@ let afficher_tas (tas: tas_min_tab) =
   ) !(fst tas);
   print_newline ()
 
-let renvoyer_tas (tas: tas_min_tab) =
-  Array.fold_left (fun ma_string elem ->
-    match elem with
-    | Some x -> ma_string ^ (string_of_int (val_cle x ) ) ^ " "
-    | None -> ma_string
-  ) "" !(fst tas)
 
 
 (* vérification à faire : que les deux élément ne dépasse pas la taille du tas
    si c'est le cas, eh bien générer une erreur, car on est pas censé faire d'échange avec des None 
  *)
 
-let set_tab (tas:tas_min_tab) (el_i:int) (el:cle option) =
+let set_tab (tas:structure) (el_i:int) (el:cle option) =
   let tab, _ = tas in
   let taille_tab = Array.length !tab in
   if el_i >= taille_tab then
@@ -41,7 +38,7 @@ let set_tab (tas:tas_min_tab) (el_i:int) (el:cle option) =
   else
     Array.set !tab el_i el 
     
-let get_tab (tas:tas_min_tab) (el_i:int) =
+let get_tab (tas:structure) (el_i:int) =
   (* si l'élément dépasse la taille du tas *)
   if Array.length !(fst tas) <= el_i then
     (* on génère pas d'erreur, car dans descendre_el, ça peut être utile dans certain cas, comme lorsque l'on a presque remplit le tas, mais c'est pas une puissance de 2
@@ -51,15 +48,22 @@ let get_tab (tas:tas_min_tab) (el_i:int) =
     Array.get !(fst tas) el_i
 
   
-let echanger_el_tab (tas : tas_min_tab) (el1_i:int) (el2_i:int) =
+let echanger_el_tab (tas : structure) (el1_i:int) (el2_i:int) =
   let taille = taille_allouer_tas tas in 
+  print_string "on rentre dans la nouvel\n" ; 
   if el1_i >= taille || el2_i >= taille then failwith "Erreur : les indices des éléments de l'échange dépasse la taille du tas"
+  else if el1_i = 0 && el2_i = 0 then
+    (print_string "on rentre ici \n" ; set_tab tas 0 None ; print_string "et on sort\n" ; ())
   else 
+    (
+  print_string "et on rerentere ? \n" ;
+  Printf.printf " el 1 %d, el 2 %d \n" el1_i el2_i ; 
   let val_el1 = get_tab tas el1_i in
   let val_el2 = get_tab tas el2_i in
   match val_el1, val_el2 with
   | None, None -> failwith "Erreur : les éléments à échanger n'existent pas"
   | el1, el2 -> (set_tab tas el1_i el2); set_tab tas el2_i el1
+    )
 
 
 (* permet de descendre un élément pour la construction
@@ -99,7 +103,7 @@ let rec descendre_el tas el_i =
        echanger_el_tab tas el_i fils_min ; (* on l'échange de place avec le noeud courant, le plus grand du tas *)
        descendre_el tas fils_min)
 
-let rec monter_el (tas:tas_min_tab) (el_i:int) =
+let rec monter_el (tas:structure) (el_i:int) =
   if el_i = 0 then () (* l'élément est en tête, plus rien à faire *)
   else
     let parent_i = (el_i-1)/2 in (* accès au parent : (i-1)/2 *)
@@ -113,46 +117,59 @@ let rec monter_el (tas:tas_min_tab) (el_i:int) =
     )
     | _ , _ -> failwith "Erreur : anormal, un None dans la remontée"
 
-let supprMinTab (tas_tab:tas_min_tab) =
+let suppr_min (tas_tab:structure) : (cle option * structure option) =
   let tab, taille = tas_tab in
   let plus_petit_el = get_tab tas_tab 0 in
   set_tab tas_tab 0 None ;
   (* afficher_tas tas_tab ;  *)
   (* on déplace le plus grand élément à racine *)
+  print_string "descendre est pas le soucis\n" ;
+  (* il faut supprimer le dernier élément en tête,  *)
+  (* if !taille-1 = 0 then (None, None) else ( *)
+  if (!taille > 1 ) then (
+    (* ok j'ai pigé la subtilité je pense, ça doit venir de descendre_el_tas qui fonctionne mal dans le cas où l'on arrive a deux élément peut-être *)
+    (* non je pense pas, mais quand on fait un échange avec lui même, normalemnt c'est qu'il reste un seul élément, et c'est le plus grand
+       pourquoi on le set à None ? on est censé le récupéré pour le renvoyer, ça serait la chose logique à faire
+       Ok, ce qui me parait logique est de faire l'échange si il y a une taille > 1, sinon si il y a une taille de 1 exactement bah on renvoie l'élément courant et taille - 1
+       et sinon, c'est qu'il y a aucun élément dedans, et on renvoie None
+     *)
   echanger_el_tab tas_tab 0 (!taille-1);
   taille := !taille - 1 ;
   (* on le fait descendre *)
+  print_string "descendre est le soucis\n" ;
   descendre_el tas_tab 0;
-  plus_petit_el
+  (plus_petit_el, None)
+  ) else (None, None)
 
-let ajoutMinTab (tas_tab:tas_min_tab) (el:cle) =
+let ajout (tas_tab:structure) (el:cle) =
   let taille = (snd tas_tab) in 
   (* on ajoute l'élément à la fin *)
   taille := !taille + 1;
   set_tab tas_tab (!taille-1) (Some(el)) ;
-  monter_el tas_tab (!taille-1)
+  monter_el tas_tab (!taille-1) ;
+  None
 
 
   
   
-let ajoutIteratifsTab (el_liste:cle list) : tas_min_tab =
+let ajouts_iteratifs (el_liste:cle list) : structure =
   let taille_liste  = List.length el_liste in 
   let tab = Array.make taille_liste None in
-  let le_return:tas_min_tab = (ref tab, ref 0) in
-  let rec aux (tas_tab:tas_min_tab) (el_liste:cle list) =
+  let le_return:structure = (ref tab, ref 0) in
+  let rec aux (tas_tab:structure) (el_liste:cle list) =
  ( match el_liste with
   | [] -> ()
-  | tete::reste -> ajoutMinTab tas_tab tete ;
+  | tete::reste -> let _ = ajout tas_tab tete in
                   aux tas_tab reste
  ) in aux le_return el_liste ;
   le_return 
 
-let constructionTab  (el_liste:cle list)  : tas_min_tab =
+let construction  (el_liste:cle list)  : structure =
   let el_opt_liste = List.map (fun el -> Some(el)) el_liste in
   let tab =  Array.of_list el_opt_liste in
   let taille_liste  = List.length el_liste in 
-  let le_return:tas_min_tab = (ref tab, ref taille_liste) in
-  let rec ranger_vals (tas:tas_min_tab) (el_i:int) =
+  let le_return:structure = (ref tab, ref taille_liste) in
+  let rec ranger_vals (tas:structure) (el_i:int) =
     if el_i >= 0 then 
       (descendre_el_cons tas el_i ;
        ranger_vals tas (el_i-1))
@@ -162,14 +179,25 @@ let constructionTab  (el_liste:cle list)  : tas_min_tab =
 
 
 
-let some_cle_en_cle (cle:cle option):cle=
+
+let union (tas1:structure) (tas2:structure)=
+  let taille1, taille2 = taille_tas tas1, taille_tas tas2 in
+  let some_cle_en_cle (cle:cle option):cle=
   match cle with
   | Some(el) -> el
-  | None -> failwith "anormal"
+  | None -> failwith "anormal" in 
 
-let union_tas_tab (tas1:tas_min_tab) (tas2:tas_min_tab)=
-  let taille1, taille2 = taille_tas tas1, taille_tas tas2 in
   let f (i:int):(cle) = (* prend l'élément de tab   *)
     (some_cle_en_cle  (if i < taille1 then get_tab tas1 i else get_tab tas2 (i-taille1) ))  in 
   let res = List.init (taille1 + taille2) f
-  in constructionTab res
+  in construction res
+
+let rec en_liste_croissante (tas: structure) : cle list =
+  let tab, taille = tas in
+  let cle, _ = suppr_min tas in
+  match cle with
+  | Some(cle) -> cle::(en_liste_croissante tas)
+  | None -> []
+
+
+end;;
