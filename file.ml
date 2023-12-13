@@ -126,13 +126,13 @@ let rec ufret (fb1:file_binomiale) (fb2:file_binomiale) (retenu: tournoi_binomia
     | _, []-> fb1
     | t1::rst1 , t2::rst2 ->    (* erreur viens probablement de t1 et t2, qui ne sont pas les bons *)
        let deg1, deg2  = deg t1, deg t2 in
-         Printf.printf " deg 1 : %d , deg 2 : %d \n" deg1 deg2 ;
+         (* Printf.printf " deg 1 : %d , deg 2 : %d \n" deg1 deg2 ; *)
        if deg1 < deg2 then
          ajout_min_fb t1 (union_fb rst1 fb2)
        else if deg2 < deg1 then
          ajout_min_fb t2 (union_fb rst2 fb1)
        else if deg2 = deg1 then
-         (Printf.printf "égaux %d \n" deg1 ;
+         ((* Printf.printf "égaux %d \n" deg1 ; *)
           let mon_uniontid = (union2tid t1 t2) in
           assert(est_tournoi_binomial mon_uniontid) ;
           (* Printf.printf "degré : %d \n" (deg mon_uniontid); *)
@@ -163,7 +163,7 @@ let rec ufret (fb1:file_binomiale) (fb2:file_binomiale) (retenu: tournoi_binomia
        else
          (* olé olé, pourquoi les degré rapetissent ? noramlemtn même si on prend le reste, eh bien ça doit être des éléments supérieur après *)
          (
-         Printf.printf "deg_ret : %d , deg 1 : %d , deg 2 : %d \n" deg_ret deg1 deg2 ;
+         (* Printf.printf "deg_ret : %d , deg 1 : %d , deg 2 : %d \n" deg_ret deg1 deg2 ; *)
          failwith "n'est pas censé arrivé"
          )
     )
@@ -227,7 +227,7 @@ let suppr_min_file (fb:file_binomiale): (cle * file_binomiale) =
                  (* exit(1) ; *)
                   let fb_sans_i, tb_suppr = enlever_i fb i in 
                   let fb_tb_decapite = decapite tb_suppr in
-                  Printf.printf "La clé la plus petite est : %d , La taille : %d \n " (val_cle cle_plus_petite) (nb_noeud_file fb_sans_i + nb_noeud_file fb_tb_decapite);
+                  (* Printf.printf "La clé la plus petite est : %d , La taille : %d \n " (val_cle cle_plus_petite) (nb_noeud_file fb_sans_i + nb_noeud_file fb_tb_decapite); *)
                    assert(est_file_binomiale fb_sans_i) ;
                    (* print_string "dans supr\n" ; *)
                   assert(est_file_binomiale fb_tb_decapite) ;
