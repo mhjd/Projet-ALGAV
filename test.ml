@@ -14,7 +14,7 @@ let test_tas_min () =
   
   (* test ajout itératif *)
   (* Création d'un tas *)
-  let tas_ajout_iteratif : tas_min_tab =  ajoutIteratifsTab [conv 6 ; conv 5  ; conv 2 ; conv 10 ; conv 13 ; conv 7 ; conv 8 ; conv 12 ; conv 15 ; conv 14] 0 in
+  let tas_ajout_iteratif : tas_min_tab =  ajoutIteratifsTab [conv 6 ; conv 5  ; conv 2 ; conv 10 ; conv 13 ; conv 7 ; conv 8 ; conv 12 ; conv 15 ; conv 14]  in
 
   (* Affichage du tas ajout_iteratif *)
   assert(((renvoyer_tas tas_ajout_iteratif) = "2 6 5 10 13 7 8 12 15 14 ")) ;
@@ -28,15 +28,15 @@ let test_tas_min () =
 
 
   (* test cons *)
-  let tas_cons : tas_min_tab =  (constructionTab [conv 10; conv 15; conv 13 ; conv 14; conv 8 ; conv 5 ; conv 6 ; conv 7; conv 12] 0) 
+  let tas_cons : tas_min_tab =  (constructionTab [conv 10; conv 15; conv 13 ; conv 14; conv 8 ; conv 5 ; conv 6 ; conv 7; conv 12] ) 
   in
   assert(renvoyer_tas tas_cons = ("5 7 6 12 8 13 10 14 15 ")) ;
 
   (* test union *)
 
-  let tas1 = constructionTab [conv 37;  conv 18; conv 15; conv 39; conv 11; conv 40; conv 27; conv 25; conv 9; conv 32; conv 3; conv 19; conv 23; conv 10; conv 29; conv 14; conv 26; conv 4] 0 in
+  let tas1 = constructionTab [conv 37;  conv 18; conv 15; conv 39; conv 11; conv 40; conv 27; conv 25; conv 9; conv 32; conv 3; conv 19; conv 23; conv 10; conv 29; conv 14; conv 26; conv 4]  in
 
-  let tas2 = constructionTab [conv 18; conv 28; conv 35; conv 8; conv 36; conv 34; conv 16; conv 12] 0 in
+  let tas2 = constructionTab [conv 18; conv 28; conv 35; conv 8; conv 36; conv 34; conv 16; conv 12] in
 
   assert((renvoyer_tas tas1) = "3 4 10 9 11 19 15 14 37 32 18 40 23 27 29 25 26 39 ") ; 
   assert((renvoyer_tas tas2) = "8 12 16 18 36 34 35 28 ") ; 
@@ -70,10 +70,10 @@ in
   | _ -> print_string "lol")
   ;
     (* exit(1);oi *)
-  let decroissant = file_en_liste_decroissante ma_file in (* true *)
-  Printf.printf "taille décroissant %d\n" (List.length decroissant);
-  begin match decroissant with
-  | el::queue -> (let _ = List.fold_left (fun acc el -> Printf.printf "%d, %d-> %b, %b\n" (val_cle el) (val_cle acc) (inf acc el) (eg acc el); assert(inf acc el || eg el acc); print_string "fin cond\n" ; el ) el decroissant in true)
+  let croissant = file_en_liste_croissante ma_file in (* true *)
+  Printf.printf "taille croissant %d\n" (List.length croissant);
+  begin match croissant with
+  | el::queue -> (let _ = List.fold_left (fun acc el -> assert(inf acc el || eg el acc); el ) el croissant in true)
   | [] -> true
   end
    

@@ -236,9 +236,9 @@ let suppr_min_file (fb:file_binomiale): (cle * file_binomiale) =
   
   
   
-let rec file_en_liste_decroissante (fb:file_binomiale) : cle list =
+let rec file_en_liste_croissante (fb:file_binomiale) : cle list =
   if fb <> [] then 
     let cle, fb_moins_1 = suppr_min_file fb in
-    cle::(file_en_liste_decroissante fb_moins_1)
+    cle::(file_en_liste_croissante fb_moins_1)
   else
     []

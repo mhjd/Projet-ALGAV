@@ -135,8 +135,9 @@ let ajoutMinTab (tas_tab:tas_min_tab) (el:cle) =
 
   
   
-let ajoutIteratifsTab (el_liste:cle list) (taille_allouer:int) : tas_min_tab =
-  let tab = Array.make taille_allouer None in
+let ajoutIteratifsTab (el_liste:cle list) : tas_min_tab =
+  let taille_liste  = List.length el_liste in 
+  let tab = Array.make taille_liste None in
   let le_return:tas_min_tab = (ref tab, ref 0) in
   let rec aux (tas_tab:tas_min_tab) (el_liste:cle list) =
  ( match el_liste with
@@ -146,7 +147,7 @@ let ajoutIteratifsTab (el_liste:cle list) (taille_allouer:int) : tas_min_tab =
  ) in aux le_return el_liste ;
   le_return 
 
-let constructionTab  (el_liste:cle list) (taille_allouer:int) : tas_min_tab =
+let constructionTab  (el_liste:cle list)  : tas_min_tab =
   let el_opt_liste = List.map (fun el -> Some(el)) el_liste in
   let tab =  Array.of_list el_opt_liste in
   let taille_liste  = List.length el_liste in 
@@ -171,4 +172,4 @@ let union_tas_tab (tas1:tas_min_tab) (tas2:tas_min_tab)=
   let f (i:int):(cle) = (* prend l'élément de tab   *)
     (some_cle_en_cle  (if i < taille1 then get_tab tas1 i else get_tab tas2 (i-taille1) ))  in 
   let res = List.init (taille1 + taille2) f
-  in constructionTab res 0
+  in constructionTab res

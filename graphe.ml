@@ -38,29 +38,29 @@ let fichier_vers_liste_cle (fichier:string):cle list =
        raise e
     ) in lire channel []
 
-let temps fonc cle_fichier taille :float =
+let temps fonc cle_fichier:float =
   let debut = Sys.time() in
-  let _ = fonc cle_fichier taille in
+  let _ = fonc cle_fichier in
   let fin = Sys.time() in
   fin -. debut
 
-let moyenne_temps (fonc: (cle list -> int -> tas_min_tab)) (taille:int) =
+let moyenne_temps (fonc: (cle list -> tas_min_tab)) (taille:int) =
   let noms_fichier:string list = List.map (fun i -> Printf.sprintf "./cles_alea/cles_alea/jeu_%d_nb_cles_%d.txt" i taille) [1; 2; 3; 4; 5] in
   (* liste contenant les listes de clés de chaque fichier *)
   let liste_cle_fichier:cle list list = List.map (fun fichier -> fichier_vers_liste_cle fichier) noms_fichier in
-  let temps_cle:float list = List.map (fun cles_fichier -> temps (fonc) cles_fichier taille)  liste_cle_fichier in
+  let temps_cle:float list = List.map (fun cles_fichier -> temps (fonc) cles_fichier)  liste_cle_fichier in
   let moyenne = (List.fold_left (+.) 0.0 temps_cle) /. 5.0 in
   moyenne
 
 
 let tailles = [1000 ; 5000 ; 10000 ; 20000 ; 50000 ; 80000 ; 120000 ; 200000]
 
-let liste_temps_tailles (fonc: (cle list -> int -> tas_min_tab)) =
+let liste_temps_tailles (fonc: (cle list -> tas_min_tab)) =
   List.map (fun x -> (moyenne_temps fonc x, x)) tailles
 
 
 
-let creer_graphique_test_fonc (fonc: (cle list -> int -> tas_min_tab)) (f_sortie:string) =
+let creer_graphique_test_fonc (fonc: (cle list -> tas_min_tab)) (f_sortie:string) =
   let temps_moyens = liste_temps_tailles fonc in
   let file = open_out f_sortie in
   (* y a peut-être pas moyen de direct pattern matché en argument (temps, taille) *)
