@@ -73,7 +73,7 @@ in
   let decroissant = file_en_liste_decroissante ma_file in (* true *)
   Printf.printf "taille décroissant %d\n" (List.length decroissant);
   begin match decroissant with
-  | el::queue -> (let _ = List.fold_left (fun acc el -> Printf.printf "%d\n" (val_cle el) (* ; assert(inf el acc || eg el acc) *) ; el ) el decroissant in true)
+  | el::queue -> (let _ = List.fold_left (fun acc el -> Printf.printf "%d, %d-> %b, %b\n" (val_cle el) (val_cle acc) (inf acc el) (eg acc el); assert(inf acc el || eg el acc); print_string "fin cond\n" ; el ) el decroissant in true)
   | [] -> true
   end
    
