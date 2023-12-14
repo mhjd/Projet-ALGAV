@@ -29,8 +29,12 @@ let test_struct (module Ma_structure : Data_structure) =
   let taille = 200 in
   let max = 100 in
   (* let liste_cle = List.init taille (fun i -> int32_tuple_of_int (rand_int max)) in *)
-  let liste_cle = [conv 37;  conv 18; conv 15; conv 39; conv 11; conv 40; conv 27; conv 25; conv 9; conv 32; conv 3; conv 19; conv 23; conv 10; conv 29; conv 14; conv 26; conv 4] in 
-  let ma_struct = Ma_structure.construction liste_cle in 
+  (* let liste_cle = [conv 37;  conv 18; conv 15; conv 39; conv 11; conv 40; conv 27; conv 25; conv 9; conv 32; conv 3; conv 19; conv 23; conv 10; conv 29; conv 14; conv 26; conv 4] in *)
+
+  let liste_cle = [conv 6 ; conv 5  ; conv 2 ; conv 10 ; conv 13 ; conv 7 ; conv 8 ; conv 12 ; conv 15 ; conv 14] in
+
+  let ma_struct = Ma_structure.ajouts_iteratifs liste_cle in
+ (* let ma_struct = Ma_structure.construction liste_cle in  *)
   let croissant: cle list = Ma_structure.en_liste_croissante ma_struct in 
   Printf.printf "taille croissant %d\n" (List.length croissant);
   begin match croissant with

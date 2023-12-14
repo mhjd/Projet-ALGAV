@@ -49,14 +49,13 @@ let get_tab (tas:structure) (el_i:int) =
 
   
 let echanger_el_tab (tas : structure) (el1_i:int) (el2_i:int) =
+  print_string "le soucis vient bien de là \n" ;
   let taille = taille_allouer_tas tas in 
-  print_string "on rentre dans la nouvel\n" ; 
   if el1_i >= taille || el2_i >= taille then failwith "Erreur : les indices des éléments de l'échange dépasse la taille du tas"
   else if el1_i = 0 && el2_i = 0 then
-    (print_string "on rentre ici \n" ; set_tab tas 0 None ; print_string "et on sort\n" ; ())
+    ((* print_string "on rentre ici \n" ; *) set_tab tas 0 None (* ; print_string "et on sort\n" *) ; ())
   else 
     (
-  print_string "et on rerentere ? \n" ;
   Printf.printf " el 1 %d, el 2 %d \n" el1_i el2_i ; 
   let val_el1 = get_tab tas el1_i in
   let val_el2 = get_tab tas el2_i in
@@ -92,16 +91,22 @@ let rec descendre_el_cons tas el_i =
 let rec descendre_el tas el_i =
   (* 2i + 1 : fils g, 2i + 2 : fils d *)
     let fils_g_i, fils_d_i = (el_i*2+1, el_i*2+2) in
+    let el_opt = get_tab tas el_i in 
     let fils_g_opt, fils_d_opt = get_tab tas fils_g_i, get_tab tas fils_d_i in
     (* afficher_tas tas; *)
-    match fils_g_opt, fils_d_opt with 
-    | None, None -> ()     (* on est arrivé aux feuilles *)
-    | None, Some(supr) -> failwith "cas impossible" (* gauche à droite au feuille, dans un tas *)
-    | Some(supr), None -> echanger_el_tab tas el_i fils_g_i  
-    | Some(g), Some(d) ->
+    match el_opt, fils_g_opt, fils_d_opt with 
+    | _, None, None -> ()     (* on est arrivé aux feuilles *)
+    | _, None, Some(supr) -> failwith "cas impossible" (* gauche à droite au feuille, dans un tas *)
+    | Some(el), Some(supr), None  -> (if inf supr el then (print_string "nice\n" ; echanger_el_tab tas el_i fils_g_i))
+    | Some (el), Some(g), Some(d)  ->
+      ( if inf g el ||  inf d el then
        (let fils_min = (if inf d g then fils_d_i else fils_g_i) in (* on récupère le min *)
+        print_string "le soucient \n";
        echanger_el_tab tas el_i fils_min ; (* on l'échange de place avec le noeud courant, le plus grand du tas *)
        descendre_el tas fils_min)
+      )
+    | None , _, _ -> failwith "cas impossible"
+       
 
 let rec monter_el (tas:structure) (el_i:int) =
   if el_i = 0 then () (* l'élément est en tête, plus rien à faire *)
@@ -133,15 +138,23 @@ let suppr_min (tas_tab:structure) : (cle option * structure option) =
        Ok, ce qui me parait logique est de faire l'échange si il y a une taille > 1, sinon si il y a une taille de 1 exactement bah on renvoie l'élément courant et taille - 1
        et sinon, c'est qu'il y a aucun élément dedans, et on renvoie None
      *)
+
+  print_string "ici soucient" ;
   echanger_el_tab tas_tab 0 (!taille-1);
   taille := !taille - 1 ;
   (* on le fait descendre *)
   print_string "descendre est le soucis\n" ;
   descendre_el tas_tab 0;
   (plus_petit_el, None)
-  ) else (None, None)
+  )
+  else if !taille = 1 then
 
-let ajout (tas_tab:structure) (el:cle) =
+    ( taille := !taille - 1 ;
+   (plus_petit_el, None) )
+  else
+    (None, None)
+
+let ajout (tas_tab:structure) (el:cle) : structure option =
   let taille = (snd tas_tab) in 
   (* on ajoute l'élément à la fin *)
   taille := !taille + 1;
@@ -193,6 +206,7 @@ let union (tas1:structure) (tas2:structure)=
   in construction res
 
 let rec en_liste_croissante (tas: structure) : cle list =
+  afficher_tas tas ;
   let tab, taille = tas in
   let cle, _ = suppr_min tas in
   match cle with
