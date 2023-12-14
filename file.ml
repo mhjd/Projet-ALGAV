@@ -1,13 +1,14 @@
 open Cle 
+open Structure_de_donnee
 
-type degre = int ;;
-
-type tournoi_binomial =
+module Tournoi_binomial = struct
+  type degre = int ;;
+  type tournoi_binomial =
   | Noeud of degre * cle * enfants 
   | Vide
-and enfants = tournoi_binomial list
+  and enfants = tournoi_binomial list
 
-type file_binomiale = tournoi_binomial list
+  type definition = tournoi_binomial
 
 let rec get_enfants (tb:tournoi_binomial):(tournoi_binomial list) =
   match tb with
@@ -23,19 +24,6 @@ let nb_noeud (tb:tournoi_binomial) : int=
     if enfants <> [] then aux enfants nb_noeud else nb_noeud
   in aux racine 0
 ;;
-let nb_noeud_file (fb:file_binomiale) : int =
-  List.fold_left (fun acc tb -> acc + nb_noeud tb ) 0 fb
-let rec est_tournoi_binomial (tb:tournoi_binomial) : bool =
-  match tb with
-  | Noeud(degre, cle, bk_moins_1_gauche::enfants) ->
-     let bk_moins_1_droit = Noeud(degre-1, cle, enfants) in
-     (nb_noeud tb) = int_of_float (2.0 ** (float_of_int degre)) &&
-     (nb_noeud bk_moins_1_gauche) = (nb_noeud bk_moins_1_droit) &&
-       est_tournoi_binomial bk_moins_1_droit &&
-         est_tournoi_binomial bk_moins_1_gauche
-  (* problématique, censé être une feuille, faudrait peut-être se débarasser du concept de feuille et remplacer ça par Vide *)
-  | Noeud(0, cle, []) -> true
-  | _ -> failwith "n'est vraiment pas un tournoi binomial"
 
 (* Test : voir si les arbres se construisent avec la bonne taille *)
 (* let exemple_arbre = creer_arbre_binomial 4;; *)
@@ -50,15 +38,12 @@ let afficher_nb_noeud_par_niveau (tb:tournoi_binomial) =
     if enfants <> [] then aux enfants (niveau+1)
   in aux racine 0
 ;;
-let afficher_file_binomial (fb:file_binomiale) =
-  List.iter (fun tb -> print_string "autre tb \n " ; afficher_nb_noeud_par_niveau tb) fb ;;
 
 let info_tournoi_binomial (tb:tournoi_binomial) =
   match tb with
   | Noeud (degre, cle, enfant) -> Printf.printf "Arbre de degré : %d\n" degre ; afficher_nb_noeud_par_niveau tb
   | Vide -> Printf.printf "Est vide\n"
   ;; 
-
 
 (* opérations sur arbre binomial, on commence par ça car plus simple *)
 
@@ -73,6 +58,53 @@ let rec creer_arbre_binomial (taille:int):tournoi_binomial =
   match taille with
   | 0 -> Noeud(0, zero, [])
   | n -> concat_le_double_arbre (creer_arbre_binomial (n-1)) 
+let rec deg (tb:tournoi_binomial):int =
+  match tb with
+  | Noeud(noeud_deg, _, _) -> noeud_deg
+  | Vide -> failwith "anormal"
+let est_vide (tb:tournoi_binomial):bool = 
+  match tb with
+  | Vide -> true
+  | _ -> false
+
+let cle_racine (tb:tournoi_binomial):cle =
+  match tb with
+  | Noeud(_, cle, _) -> cle
+  | Vide -> failwith "anormal" 
+
+end ;;
+
+module File : Data_structure = struct
+open Tournoi_binomial
+
+type file_binomiale = tournoi_binomial list
+
+type structure = file_binomiale
+
+
+let recup_some el =
+  match el with
+  | Some(element) -> element
+  | None -> failwith "anormal"
+
+let nb_noeud_file (fb:structure) : int =
+  List.fold_left (fun acc tb -> acc + nb_noeud tb ) 0 fb
+let rec est_tournoi_binomial (tb:tournoi_binomial) : bool =
+  match tb with
+  | Noeud(degre, cle, bk_moins_1_gauche::enfants) ->
+     let bk_moins_1_droit = Noeud(degre-1, cle, enfants) in
+     (nb_noeud tb) = int_of_float (2.0 ** (float_of_int degre)) &&
+     (nb_noeud bk_moins_1_gauche) = (nb_noeud bk_moins_1_droit) &&
+       est_tournoi_binomial bk_moins_1_droit &&
+         est_tournoi_binomial bk_moins_1_gauche
+  (* problématique, censé être une feuille, faudrait peut-être se débarasser du concept de feuille et remplacer ça par Vide *)
+  | Noeud(0, cle, []) -> true
+  | _ -> failwith "n'est vraiment pas un tournoi binomial"
+
+let afficher_file_binomial (fb:structure) =
+  List.iter (fun tb -> print_string "autre tb \n " ; afficher_nb_noeud_par_niveau tb) fb ;;
+
+
 
 
 
@@ -80,10 +112,10 @@ let rec creer_arbre_binomial (taille:int):tournoi_binomial =
 
 let cle_en_tb (cle:cle):tournoi_binomial =
   Noeud(0, cle, [])
-let tb_en_fb (tb:tournoi_binomial) :file_binomiale =
+let tb_en_fb (tb:tournoi_binomial) :structure =
   [tb]
 
-let cle_en_fb (cle:cle):file_binomiale =
+let cle_en_fb (cle:cle):structure =
   tb_en_fb (cle_en_tb cle)
 
 
@@ -100,21 +132,13 @@ let union2tid (tb1:tournoi_binomial) (tb2:tournoi_binomial) : tournoi_binomial =
        Noeud(degre1+1, tb2_cle, tb1::enfants) 
   | _ -> failwith "rien à unir, ou bien pas identique"
 
-let rec deg (tb:tournoi_binomial):int =
-  match tb with
-  | Noeud(noeud_deg, _, _) -> noeud_deg
-  | Vide -> failwith "anormal"
                
 (* la tête de la fb  est le tournoi binomial avec le degré minimum*)
-let ajout_min_fb  (tb:tournoi_binomial) (fb:file_binomiale): file_binomiale =
+let ajout_min_fb  (tb:tournoi_binomial) (fb:structure): structure =
   tb::fb
 
-let est_vide (tb:tournoi_binomial):bool = 
-  match tb with
-  | Vide -> true
-  | _ -> false
 
-let rec ufret (fb1:file_binomiale) (fb2:file_binomiale) (retenu: tournoi_binomial)  =
+let rec ufret (fb1:structure) (fb2:structure) (retenu: tournoi_binomial)  =
   (* print_string "appel récursif \n" ; *)
   if est_vide retenu then
     (
@@ -128,9 +152,9 @@ let rec ufret (fb1:file_binomiale) (fb2:file_binomiale) (retenu: tournoi_binomia
        let deg1, deg2  = deg t1, deg t2 in
          (* Printf.printf " deg 1 : %d , deg 2 : %d \n" deg1 deg2 ; *)
        if deg1 < deg2 then
-         ajout_min_fb t1 (union_fb rst1 fb2)
+         ajout_min_fb t1 (union rst1 fb2)
        else if deg2 < deg1 then
-         ajout_min_fb t2 (union_fb rst2 fb1)
+         ajout_min_fb t2 (union rst2 fb1)
        else if deg2 = deg1 then
          ((* Printf.printf "égaux %d \n" deg1 ; *)
           let mon_uniontid = (union2tid t1 t2) in
@@ -145,12 +169,12 @@ let rec ufret (fb1:file_binomiale) (fb2:file_binomiale) (retenu: tournoi_binomia
     ((* Printf.printf "retenu %d \n" (deg retenu) ; *)
     let deg_ret = deg retenu in
     match fb1, fb2 with
-    | [], _ -> union_fb (tb_en_fb retenu) fb2
-    | _, [] -> union_fb (tb_en_fb retenu) fb1
+    | [], _ -> union (tb_en_fb retenu) fb2
+    | _, [] -> union (tb_en_fb retenu) fb1
     | t1::rst1, t2::rst2  ->
        let deg1, deg2 = deg t1, deg t2 in
        if deg_ret < deg1 && deg_ret < deg2 then
-         ajout_min_fb retenu (union_fb fb1 fb2)
+         ajout_min_fb retenu (union fb1 fb2)
        else if deg_ret = deg1 && deg_ret = deg2 then
          let file_sans_min = ufret rst1 rst2 (union2tid t1 t2) in 
          ajout_min_fb retenu file_sans_min
@@ -167,36 +191,35 @@ let rec ufret (fb1:file_binomiale) (fb2:file_binomiale) (retenu: tournoi_binomia
          failwith "n'est pas censé arrivé"
          )
     )
-and union_fb (fb1:file_binomiale) (fb2:file_binomiale) : file_binomiale =
+and union (fb1:structure) (fb2:structure) : structure =
   ufret fb1 fb2 Vide
   
   
-let ajout_fb (cle:cle) (fb:file_binomiale):file_binomiale =
+let ajout (fb:structure) (cle:cle) : structure option =
   (* print_string "avant : \n" ;  *)
   (* afficher_file_binomial fb ; *)
   let fb_a_ajouter = cle_en_fb cle in
-  let res = union_fb fb_a_ajouter fb in
+  let res = union fb_a_ajouter fb in
   (* print_string "après : \n" ; *)
   (* afficher_file_binomial res ; *)
-  res
+  Some(res)
   
 
-let construction_fb (liste_cle : cle list) : file_binomiale =
+let construction (liste_cle : cle list) : structure =
   (* je suis pas sûr de moi pour l'accumulateur : [] *)
-  List.fold_left (fun acc cle -> ajout_fb cle acc) []  liste_cle
+  List.fold_left (fun acc cle -> recup_some (ajout acc cle)) []  liste_cle
 
-let decapite (tb:tournoi_binomial): file_binomiale =
+let ajouts_iteratifs  (liste_cle : cle list) : structure =
+  construction liste_cle
+
+let decapite (tb:tournoi_binomial): structure =
   match tb with
   | Noeud(_, _, enfants) -> List.rev enfants
   | Vide -> failwith "n'est jamais censé arrivé"
 
-let cle_racine (tb:tournoi_binomial):cle =
-  match tb with
-  | Noeud(_, cle, _) -> cle
-  | Vide -> failwith "anormal" 
 
 (* potentiellement, il peut y avoir un problème avec i, on arrête à i=0 ou 1 ? *)
-let enlever_i (liste:file_binomiale) (i:int) : (file_binomiale * tournoi_binomial)  =
+let enlever_i (liste:structure) (i:int) : (structure * tournoi_binomial)  =
   let rec aux liste i ret = 
   match liste with
   | h::t -> if i > 0 then let nouveau_t, retour = (aux t (i-1) ret) in (h::nouveau_t, retour)  else t, Some(h)
@@ -207,11 +230,11 @@ let enlever_i (liste:file_binomiale) (i:int) : (file_binomiale * tournoi_binomia
   | None -> failwith "aucun i n'a été trouvé"
   | Some(tb) -> (nouvelle_fb, tb)
   
-let rec est_file_binomiale (fb:file_binomiale) : bool =
+let rec est_structure (fb:structure) : bool =
   match fb with
-  | tb::rst -> est_tournoi_binomial tb && est_file_binomiale rst
+  | tb::rst -> est_tournoi_binomial tb && est_structure rst
   | [] -> true
-let suppr_min_file (fb:file_binomiale): (cle * file_binomiale) =
+let suppr_min (fb:structure): (cle option * structure option) =
   (* on est censé trouver le plus petit en parcourant chaque racine
      on retire le tournoi
      on décapite ce tournoi et on obtient une nouvelle file (fonction décapite)
@@ -228,17 +251,20 @@ let suppr_min_file (fb:file_binomiale): (cle * file_binomiale) =
                   let fb_sans_i, tb_suppr = enlever_i fb i in 
                   let fb_tb_decapite = decapite tb_suppr in
                   (* Printf.printf "La clé la plus petite est : %d , La taille : %d \n " (val_cle cle_plus_petite) (nb_noeud_file fb_sans_i + nb_noeud_file fb_tb_decapite); *)
-                   assert(est_file_binomiale fb_sans_i) ;
+                   assert(est_structure fb_sans_i) ;
                    (* print_string "dans supr\n" ; *)
-                  assert(est_file_binomiale fb_tb_decapite) ;
-                  (cle_plus_petite, union_fb fb_sans_i fb_tb_decapite)
+                  assert(est_structure fb_tb_decapite) ;
+                  (Some(cle_plus_petite), Some(union fb_sans_i fb_tb_decapite))
   | [] -> failwith "file vide, aucun élément à supprimer"
   
   
   
-let rec file_en_liste_croissante (fb:file_binomiale) : cle list =
+let rec en_liste_croissante (fb:structure) : cle list =
   if fb <> [] then 
-    let cle, fb_moins_1 = suppr_min_file fb in
-    cle::(file_en_liste_croissante fb_moins_1)
+    let cle_opt, fb_moins_1_opt = suppr_min fb in
+    let cle, fb_moins_1 = recup_some cle_opt, recup_some fb_moins_1_opt in
+    cle::(en_liste_croissante fb_moins_1)
   else
     []
+
+end;;

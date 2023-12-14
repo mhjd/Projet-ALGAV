@@ -1,11 +1,14 @@
 open Cle
 open Tas
+open File
 open Graphe
 
 
 let () = 
   
  Test.test_struct (module Tas_min_tab) ;;
+
+ Test.test_struct (module File) ;;
 
 (* Test.test_arbre ();; *)            (* test arbre binomial *)
 (* Test.test_file ();;     *)         (* file binomiale *)
