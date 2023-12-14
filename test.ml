@@ -38,7 +38,7 @@ let test_struct (module Ma_structure : Data_structure) =
   let croissant: cle list = Ma_structure.en_liste_croissante ma_struct in 
   Printf.printf "taille croissant %d\n" (List.length croissant);
   begin match croissant with
-  | el::queue -> (List.fold_left (fun acc el -> Printf.printf "el : %d\n" (val_cle el) ; assert(inf acc el || eg el acc); el ) el croissant; ())
+  | el::queue -> (List.fold_left (fun acc el -> (* Printf.printf "el : %d\n" (val_cle el) ; *) assert(inf acc el || eg el acc); el ) el croissant; ())
   | [] -> ()
   end
 
