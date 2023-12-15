@@ -126,24 +126,11 @@ let suppr_min (tas_tab:structure) : (cle option * structure option) =
   let tab, taille = tas_tab in
   let plus_petit_el = get_tab tas_tab 0 in
   set_tab tas_tab 0 None ;
-  (* afficher_tas tas_tab ;  *)
   (* on déplace le plus grand élément à racine *)
-  (* print_string "descendre est pas le soucis\n" ; *)
-  (* il faut supprimer le dernier élément en tête,  *)
-  (* if !taille-1 = 0 then (None, None) else ( *)
   if (!taille > 1 ) then (
-    (* ok j'ai pigé la subtilité je pense, ça doit venir de descendre_el_tas qui fonctionne mal dans le cas où l'on arrive a deux élément peut-être *)
-    (* non je pense pas, mais quand on fait un échange avec lui même, normalemnt c'est qu'il reste un seul élément, et c'est le plus grand
-       pourquoi on le set à None ? on est censé le récupéré pour le renvoyer, ça serait la chose logique à faire
-       Ok, ce qui me parait logique est de faire l'échange si il y a une taille > 1, sinon si il y a une taille de 1 exactement bah on renvoie l'élément courant et taille - 1
-       et sinon, c'est qu'il y a aucun élément dedans, et on renvoie None
-     *)
-
-  (* print_string "ici soucient" ; *)
   echanger_el_tab tas_tab 0 (!taille-1);
   taille := !taille - 1 ;
-  (* on le fait descendre *)
-  (* print_string "descendre est le soucis\n" ; *)
+  (* on le fait descendre *) 
   descendre_el tas_tab 0;
   (plus_petit_el, None)
   )
