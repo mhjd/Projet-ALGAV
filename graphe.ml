@@ -1,16 +1,19 @@
 open Cle
 open Structure_de_donnee
 open Tas
+open File
 
 (* https://v2.ocaml.org/manual/moduleexamples.html *)
 module type Graphique  = functor (Ma_structure : Data_structure) -> sig
   val creer_graphique_ajouts_iteratifs :  string -> unit
   val creer_graphique_construction :   string -> unit
+  val creer_graphique_union : string -> unit 
 end;; 
   
 
 
 module Graphique : Graphique = functor (Ma_structure : Data_structure) ->  struct 
+(* prend une ligne d'un de nos jeux de données, et renvoie son équivalent en Cle.cle  *)
 let string_en_cle (string_en_cle:string) =
 (* il y a certain nombre hexadécimaux ayant moins de 32 chiffre, il faut donc ajouter des 0 devant : *)
   (let string_en_string32 =
@@ -66,6 +69,7 @@ let moyenne_temps (fonc: (cle list -> Ma_structure.structure)) (taille:int) =
 let tailles = [1000 ; 5000 ; 10000 ; 20000 ; 50000 ; 80000 ; 120000 ; 200000]
 
 let liste_temps_tailles (fonc: (cle list -> Ma_structure.structure)) =
+  print_string "étape 2 \n" ; 
   List.map (fun x -> (moyenne_temps fonc x, x)) tailles
 
 
@@ -83,12 +87,55 @@ let creer_graphique_ajouts_iteratifs (f_sortie:string) =
   List.iteri (fun i (temps, taille) ->  Printf.fprintf file "%d %f\n" taille temps) temps_moyens
 
 let creer_graphique_construction (f_sortie:string) =
+  print_string "étape 1 \n" ; 
+
   let temps_moyens = liste_temps_tailles Ma_structure.construction in
   let file = open_out f_sortie in
   (* y a peut-être pas moyen de direct pattern matché en argument (temps, taille) *)
 
   List.iteri (fun i (temps, taille) ->  Printf.fprintf file "%d %f\n" taille temps) temps_moyens
 ;;
+
+(* union prend des paramètres différents, donc nécessite des fonctions différentes *)
+
+let calcul_temps_union (liste_struct:Ma_structure.structure list): float =
+  let debut = Sys.time() in
+  let a, b, c, d = match liste_struct with
+  | [a ; b ; c; d] -> (a, b, c, d)
+  | _ -> failwith "normalement il y a 4 éléments"
+  in 
+  let n = Ma_structure.union a b in
+  let m = Ma_structure.union c d in
+  let _ = Ma_structure.union n m in
+  let fin = Sys.time() in
+  fin -. debut
+
+let temps_union (taille:int) =
+  let noms_fichier:string list = List.map (fun i -> Printf.sprintf "./cles_alea/cles_alea/jeu_%d_nb_cles_%d.txt" i taille) [1; 2; 3; 4] in
+  (* liste contenant les listes de clés de chaque fichier *)
+  (* on va récupérer les 4 tas *)
+  let liste_struct:Ma_structure.structure list = List.map (fun fichier -> Ma_structure.construction (fichier_vers_liste_cle fichier)) noms_fichier in
+
+  let temps_struct:float = calcul_temps_union liste_struct in
+  temps_struct
+
+
+let tailles = [1000 ; 5000 ; 10000 ; 20000 ; 50000 ; 80000 ; 120000 ; 200000]
+
+let liste_temps_tailles_union () =
+  List.map (fun x -> (temps_union x, x)) tailles
+
+
+
+let creer_graphique_union (f_sortie:string) =
+  let temps_u = liste_temps_tailles_union () in
+  let file = open_out f_sortie in
+  (* y a peut-être pas moyen de direct pattern matché en argument (temps, taille) *)
+
+  List.iteri (fun i (temps, taille) ->  Printf.fprintf file "%d %f\n" taille temps) temps_u
+;;
 end  ;;
 
 module Graphe_tas_min = Graphique (Tas_min_tab)
+
+module Graphe_file = Graphique (File)

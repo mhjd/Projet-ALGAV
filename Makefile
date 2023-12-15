@@ -1,9 +1,9 @@
-all : clean cle.cmo structure_de_donnee.cmo tas.cmo file.cmo graphe.cmo test.cmo main
+all : clean cle.cmo structure_de_donnee.cmo tas.cmo tas_arbre.cmo file.cmo graphe.cmo test.cmo main
 
 
 
-main : cle.cmo structure_de_donnee.cmo tas.cmo file.cmo graphe.cmo test.cmo main.cmo
-	ocamlc cle.cmo structure_de_donnee.cmo tas.cmo file.cmo graphe.cmo test.cmo main.cmo -o main.exe
+main : cle.cmo structure_de_donnee.cmo tas.cmo tas_arbre.cmo file.cmo graphe.cmo test.cmo main.cmo
+	ocamlc cle.cmo structure_de_donnee.cmo tas.cmo tas_arbre.cmo file.cmo graphe.cmo test.cmo main.cmo -o main.exe
 
 structure_de_donnee.cmo :
 	ocamlc -c structure_de_donnee.ml
@@ -13,6 +13,8 @@ cle.cmo :
 
 tas.cmo :
 	ocamlc -c tas.ml
+tas_arbre.cmo :
+	ocamlc -c tas_arbre.ml
 file.cmo :
 	ocamlc -c file.ml
 

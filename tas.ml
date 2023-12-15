@@ -195,6 +195,7 @@ let construction  (el_liste:cle list)  : structure =
 
 
 let union (tas1:structure) (tas2:structure)=
+  (* j'aurais simplement pu faire fst tas1 @ fst tas2, ça aurait été bcp plus simple, et j'additionne les tailles  *)
   let taille1, taille2 = taille_tas tas1, taille_tas tas2 in
   let some_cle_en_cle (cle:cle option):cle=
   match cle with
@@ -208,7 +209,6 @@ let union (tas1:structure) (tas2:structure)=
 
 let rec en_liste_croissante (tas: structure) : cle list =
   (* afficher_tas tas ; *)
-  let tab, taille = tas in
   let cle, _ = suppr_min tas in
   match cle with
   | Some(cle) -> cle::(en_liste_croissante tas)
